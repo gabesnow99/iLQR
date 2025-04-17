@@ -53,7 +53,7 @@ class PendulumCartSim:
 
         return [x_dot, x_ddot, theta_dot, theta_ddot]
 
-    def animate(self):
+    def animate(self, save=False):
         """
         Animate the pendulum on cart system.
         """
@@ -96,6 +96,10 @@ class PendulumCartSim:
 
         # Create the animation
         ani = FuncAnimation(fig, animate, frames=len(x_hist), init_func=init, interval=.001/self.dt, blit=True)
+
+        if save:
+            # Save the animation as a GIF using PillowWriter
+            ani.save('my_animation.mp4', writer='ffmpeg', fps=120)
 
         # Show the animation
         plt.show()
