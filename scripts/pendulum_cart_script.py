@@ -6,12 +6,14 @@ from os import fspath
 from pathlib import Path
 sys.path.insert(0, fspath(Path(__file__).parents[1]))
 
+from IPython.core.debugger import set_trace
+
 from systems.pendulum_cart_dynamics import f_pendulum_cart_discrete
 from regulators.ilqr_discrete import iLQR_discrete
 from simulation.pendulum_cart_sim import PendulumCartSim
 
 
-def run_scenario(x1_0=0., x1_f=0., th_0=0., th_f=np.pi, v1_0=0., v1_f=0., dt=.01, t_final=20, homogeneous=False, Q=np.array([]), R=None, Qf=None, max_iter=50, u_val=0.):
+def run_scenario(x1_0=0., x1_f=0., th_0=0., th_f=np.pi, v1_0=0., v1_f=0., dt=.01, t_final=20, homogeneous=False, Q=np.array([]), R=None, Qf=None, max_iter=50, u_val=0., customQ=False):
 
     x0 = np.array([x1_0, v1_0, th_0, 0.])
     x_goal = np.array([x1_f, v1_f, th_f, 0.])
@@ -25,7 +27,7 @@ def run_scenario(x1_0=0., x1_f=0., th_0=0., th_f=np.pi, v1_0=0., v1_f=0., dt=.01
         Q = np.diag([0., 0., 0., 0.])
         R = np.diag([(1 / 2.)**2]) * 10000
         Qf = np.diag([0., 0., 0., 0.])
-    elif Q.size > 0:
+    else:
         Q = np.diag([5.**2., .5**2, 5.**2, .5**2])
         R = np.diag([(1 / 2.)**2])
         Qf = np.diag([100**2, 20**2, 100**2, 20**2])
@@ -51,7 +53,7 @@ def run_scenario(x1_0=0., x1_f=0., th_0=0., th_f=np.pi, v1_0=0., v1_f=0., dt=.01
 
 
 ##### SCENARIO 0 #####
-''' DROPPING PENDULUM
+# ''' DROPPING PENDULUM
 x1_0 = -1.5
 v1_0 = 1.
 th_0 = np.pi/4
@@ -59,7 +61,7 @@ run_scenario(x1_0=x1_0, v1_0=v1_0, th_0=th_0, homogeneous=True)
 # '''
 
 ##### SCENARIO 1 #####
-''' CONTROLLING PENDULUM TO 0
+# ''' CONTROLLING PENDULUM TO 0
 x1_0 = 0.
 x1_f = 0.
 th_0 = 0.
@@ -68,7 +70,7 @@ run_scenario(x1_0, x1_f, th_0, th_f)
 # '''
 
 ##### SCENARIO 2 #####
-''' MOVING CART
+# ''' MOVING CART
 x1_0 = -1.5
 x1_f = 1.5
 th_0 = 0.
@@ -77,16 +79,12 @@ run_scenario(x1_0, x1_f, th_0, th_f)
 # '''
 
 ##### SCENARIO 3 #####
-''' JUGGLER
+# ''' JUGGLER
 x1_0 = -2.
 x1_f = 6.
 th_0 = np.pi/4
 th_f = np.pi/4
-Q = np.diag([0., 0., 1000.**2, 0.])
-R = np.diag([.0001])
-Qf = np.diag([0., 0., 1000.**2, 0.])
-u_init = 40
-run_scenario(x1_0, x1_f, th_0, th_f, Q=Q, R=R, Qf=Qf, max_iter=50, t_final=6, dt=.005)
+run_scenario(x1_0, x1_f, th_0, th_f, max_iter=50, t_final=6, dt=.005)
 # '''
 
 ##### SCENARIO 4 #####
@@ -95,9 +93,5 @@ x1_0 = 0.
 x1_f = 0.
 th_0 = np.pi
 th_f = 0.
-Q = np.diag([0., 0., 1000.**2, 0.])
-R = np.diag([.0001])
-Qf = np.diag([0., 0., 1000.**2, 0.])
-u_init = 40
-run_scenario(x1_0, x1_f, th_0, th_f, Q=Q, R=R, Qf=Qf, max_iter=50, t_final=10, dt=.005)
+run_scenario(x1_0, x1_f, th_0, th_f, t_final=10, dt=.005)
 # '''
