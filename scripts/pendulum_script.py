@@ -9,8 +9,6 @@ sys.path.insert(0, fspath(Path(__file__).parents[1]))
 from systems.pendulum_dynamics import f_pendulum_discrete
 from regulators.ilqr_discrete import iLQR_discrete
 
-from IPython.core.debugger import set_trace
-
 jim = iLQR_discrete(f_pendulum_discrete)
 
 th_0 = np.deg2rad(15)

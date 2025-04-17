@@ -15,15 +15,15 @@ class iLQR_discrete:
         m = len(u)
         A = np.zeros((n, n))
         B = np.zeros((n, m))
-        fx = self.f(x, u)
+        fx = self.f(x, u, self.dt)
         for i in range(n):
             dx = np.zeros_like(x)
             dx[i] = eps
-            A[:, i] = (self.f(x + dx, u) - fx) / eps
+            A[:, i] = (self.f(x + dx, u, self.dt) - fx) / eps
         for i in range(m):
             du = np.zeros_like(u)
             du[i] = eps
-            B[:, i] = (self.f(x, u + du) - fx) / eps
+            B[:, i] = (self.f(x, u + du, self.dt) - fx) / eps
         return A, B
 
     def ilqr(self, x0, u_init, x_goal, Q, R, Qf, max_iter=100, tol=1e-6):
@@ -39,7 +39,7 @@ class iLQR_discrete:
 
             # Forward rollout
             for t in range(N):
-                x[t+1] = self.f(x[t], u[t])
+                x[t+1] = self.f(x[t], u[t], self.dt)
 
             # Cost-to-go and derivatives initialization
             Vx = Qf @ (x[-1] - x_goal)
@@ -77,7 +77,7 @@ class iLQR_discrete:
                 for t in range(N):
                     dx = x_new[t] - x[t]
                     ut = u[t] + alpha * k[t] + K[t] @ dx
-                    xt = self.f(x_new[t], ut)
+                    xt = self.f(x_new[t], ut, self.dt)
                     u_new.append(ut)
                     x_new.append(xt)
                 cost_new = sum(self.cost(x_new[t], u_new[t], x_goal, Q, R) for t in range(N))

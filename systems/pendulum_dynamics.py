@@ -11,7 +11,7 @@ def f_pendulum_continuous(x, u):
     to_return = np.array([th_dot, th_ddot]).reshape(np.shape(x))
     return to_return
 
-def f_pendulum_discrete(x, u, dt=.001):
+def f_pendulum_discrete(x, u, dt):
     x_dot = f_pendulum_continuous(x, u)
     return x + x_dot * dt
 
